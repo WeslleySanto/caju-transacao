@@ -104,3 +104,37 @@ A seguir está uma questão aberta sobre um recurso importante de um autorizador
 ---
 
 **Para este teste, tente ao máximo implementar um sistema de autorização de transações considerando todos os desafios apresentados (L1 a L4) e conceitos básicos.**
+
+## Como executar
+
+### Run and build docker
+
+`docker compose up -d`
+
+### URL
+
+`localhost:8100/api/transaction`
+
+### Body
+
+```json
+{
+	"accountId": 1,
+	"amount": 1,
+	"mcc": "5811",
+	"merchant": "PADARIA DO ZE               SAO PAULO BR"
+}
+```
+
+### Curl
+
+```json
+curl --location --request GET 'http://localhost:8100/api/transaction' \
+--header 'Content-Type: application/json' \
+--data '{
+	"accountId": 1,
+	"amount": 1,
+	"mcc": "5811",
+	"merchant": "PADARIA DO ZE               SAO PAULO BR"
+}'
+```
