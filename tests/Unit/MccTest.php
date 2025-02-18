@@ -5,8 +5,6 @@ namespace Tests\Unit;
 use App\Models\Mcc;
 use App\Models\Category;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class MccTest extends TestCase
