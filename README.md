@@ -1,66 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Desafio Técnico para fazer em casa
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Introdução
 
-## About Laravel
+Autorizar uma transação com cartão de crédito é o pão com manteiga da vida no Caju. Este teste visa dar uma olhada nas diferentes estratégias que os candidatos podem ter ao implementar este recurso crucial.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Resolução e entrega [leia com atenção!]
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**O que será avaliado?**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Além de avaliar a correção da sua solução, temos interesse em ver como você modela o domínio, organiza seu código e implementa seus testes. 
 
-## Learning Laravel
+**Linguagem e bibliotecas**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Na Caju, usamos **Scala e Kotlin** no nosso dia a dia (e demonstrar experiência em alguma delas é um grande diferencial). No entanto, você pode implementar sua solução utilizando sua linguagem favorita, dando preferência ao paradigma de programação funcional.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Bibliotecas são, obviamente, permitidas e você pode escolher o banco de dados de sua preferência.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Como entregar a solução?**
 
-## Laravel Sponsors
+Entregue a sua solução preferencialmente criando um repositório git (Github, Gitlab, etc). Você pode alternativamente entregar em um arquivo zipado ou uma pasta de algum serviço de armazenamento em nuvem (por exemplo, Google Drive)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+É muito importante escrever um arquivo README com as instruções para execução do projeto.
 
-### Premium Partners
+Agora, vamos guiá-lo através de alguns conceitos básicos.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Transaction
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Uma versão simplificada de um transaction payload de cartão de crédito é o seguinte:
 
-## Code of Conduct
+```json
+{
+	"account": "123",
+	"amount": 100.00,
+	"mcc": "5811",
+	"merchant": "PADARIA DO ZE               SAO PAULO BR"
+}
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Atributos
 
-## Security Vulnerabilities
+- **id** - Um identificador único para esta transação.
+- **accountId** - Um identificador para a conta.
+- **amount** - O valor a ser debitado de um saldo.
+- **merchant** - O nome do estabelecimento.
+- **mcc** - Um código numérico de 4 dígitos que classifica os estabelecimentos
+comerciais de acordo com o tipo de produto vendido ou serviço prestado.
+    
+    O `MCC` contém a classificação do estabelecimento. Baseado no seu valor, deve-se
+    decidir qual o saldo será utilizado (na totalidade do valor da transação). Por
+    simplicidade, vamos usar a seguinte regra:
+    
+    - Se o `mcc` for `"5411"` ou `"5412"`, deve-se utilizar o saldo de `FOOD`.
+    - Se o `mcc` for `"5811"` ou `"5812"`, deve-se utilizar o saldo de `MEAL`.
+    - Para quaisquer outros valores do `mcc`, deve-se utilizar o saldo de `CASH`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Desafios (o que você deve fazer)
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Cada um dos desafios a seguir são etapas na criação de um **autorizador completo**. Seu autorizador deve ser um servidor HTTP que processe a transaction payload JSON usando as regras a seguir.
+
+As possíveis respostas são:
+
+- `{ "code": "51" }` se a transação é **rejeitada**, porque não tem saldo suficiente
+- `{ "code": "00" }` se a transação é **aprovada**
+- `{ "code": "07" }` se acontecer qualquer outro problema que impeça a transação de ser processada
+
+O HTTP Status Code é sempre `200`
+
+## L1. Autorizador simples
+
+O **autorizador simples** deve funcionar da seguinte forma:
+ -  Recebe a transação
+ -  Usa **apenas** a MCC para mapear a transação para uma categoria de benefícios
+ -  Aprova ou rejeita a transação
+ -  Caso a transação seja aprovada, o saldo da categoria mapeada deverá ser diminuído em **amount**.
+
+## L2. Autorizador com fallback
+
+Para despesas não relacionadas a benefícios, criamos outra categoria, chamada **CASH**.
+O autorizador com fallback deve funcionar como o autorizador simples, com a seguinte diferença:
+- Se a MCC não puder ser mapeado para uma categoria de benefícios ou se o saldo da categoria fornecida não for suficiente para pagar a transação inteira, verifica o saldo de **CASH** e, se for suficiente, debita esse saldo.
+
+## L3.Dependente do comerciante
+
+As vezes, os MCCs estão incorretos e uma transação deve ser processada levando em consideração também os dados do comerciante. Crie um mecanismo para substituir MCCs com base no nome do comerciante. O nome do comerciante sempre deve ter maior precedência sobre as MCCs.
+
+Exemplos:
+
+- `UBER TRIP                   SAO PAULO BR`
+- `UBER EATS                   SAO PAULO BR`
+- `PAG*JoseDaSilva          RIO DE JANEI BR`
+- `PICPAY*BILHETEUNICO           GOIANIA BR`
+
+## L4. Questão aberta
+
+A seguir está uma questão aberta sobre um recurso importante de um autorizador completo (que você não precisa implementar, apenas discuta da maneira que achar adequada, como texto, diagramas, etc.).
+
+- Transações simultâneas: dado que o mesmo cartão de crédito pode ser utilizado em diferentes serviços online, existe uma pequena mas existente probabilidade de ocorrerem duas transações ao mesmo tempo. O que você faria para garantir que apenas uma transação por conta fosse processada em um determinado momento? Esteja ciente do fato de que todas as solicitações de transação são síncronas e devem ser processadas rapidamente (menos de 100 ms), ou a transação atingirá o timeout.
+
+---
+
+**Para este teste, tente ao máximo implementar um sistema de autorização de transações considerando todos os desafios apresentados (L1 a L4) e conceitos básicos.**
